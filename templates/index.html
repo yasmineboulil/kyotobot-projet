@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bienvenue à Kyoto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar fixe -->
+    <nav class="navbar">
+        <a href="/" class="navbar-logo">🌸 KyotoBot</a>
+        <div class="navbar-links">
+            <a href="/" class="active">Accueil</a>
+            <a href="/chatpage">💬 Chat</a>
+            <a href="/lieux">📍 Lieux</a>
+            <a href="/itineraires">🗺️ Itinéraires</a>
+        </div>
+    </nav>
+
+    <!-- Animation cerisiers -->
+    <div class="sakura-container">
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+    </div>
+
+    <div id="home-container">
+        <!-- Titre principal -->
+        <h1>🌸 京都へようこそ — Bienvenue à Kyoto 🌸</h1>
+        <p class="subtitle">Planifiez votre voyage parfait avec <strong>KyotoBot</strong>, votre assistant touristique intelligent.</p>
+
+        <!-- Section explicative -->
+        <div id="features-section">
+            <h2>Comment ça marche ?</h2>
+            
+            <div class="features-grid">
+                <!-- Feature 1 : Chat -->
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Chatbot Intelligent</h3>
+                    <p>Discutez avec KyotoBot en langage naturel. Il comprend votre budget, vos envies et votre temps disponible pour créer un itinéraire sur-mesure.</p>
+                    <div class="feature-example">
+                        <em>"J'ai 50€ et 4h, je veux voir des temples"</em>
+                    </div>
+                </div>
+
+                <!-- Feature 2 : Lieux -->
+                <div class="feature-card">
+                    <div class="feature-icon">📍</div>
+                    <h3>Guide des Lieux</h3>
+                    <p>Explorez 35 lieux emblématiques de Kyoto : temples, jardins zen, restaurants traditionnels, quartiers historiques et hébergements.</p>
+                    <div class="feature-tags">
+                        <span>🏯 Temples</span>
+                        <span>🌳 Jardins</span>
+                        <span>🍜 Restaurants</span>
+                        <span>🏨 Hôtels</span>
+                    </div>
+                </div>
+
+                <!-- Feature 3 : Itinéraires -->
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Itinéraires Prêts</h3>
+                    <p>Découvrez 5 circuits thématiques complets avec horaires, budget détaillé et conseils pratiques pour chaque étape.</p>
+                    <div class="feature-tags">
+                        <span>🌸 Kyoto en 1 jour</span>
+                        <span>⛩️ Circuit temples</span>
+                        <span>🍜 Kyoto gourmand</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boutons d'action -->
+        <div id="action-buttons">
+            <button id="start-btn" onclick="window.location.href='/chatpage'">
+                💬 Commencer l'aventure
+            </button>
+            <button id="guide-btn" onclick="window.location.href='/lieux'">
+                📍 Explorer les lieux
+            </button>
+            <button id="itineraires-btn" onclick="window.location.href='/itineraires'">
+                🗺️ Voir les itinéraires
+            </button>
+        </div>
+
+</body>
+</html>

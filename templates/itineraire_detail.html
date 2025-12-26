@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ itineraire.nom }} - Kyoto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="main-container">
+        <header>
+            <div class="header-container">
+                <span class="flower">{{ itineraire.emoji }}</span>
+                <h1>{{ itineraire.nom }}</h1>
+                <span class="flower">{{ itineraire.emoji }}</span>
+            </div>
+            <a href="/itineraires" class="btn-retour">← Retour aux itinéraires</a>
+        </header>
+
+        <div id="itineraire-detail">
+            <div class="detail-section">
+                <h2>📋 Vue d'ensemble</h2>
+                <p><strong>Durée :</strong> {{ itineraire.duree }}</p>
+                <p><strong>Budget estimé :</strong> {{ itineraire.budget }}</p>
+                <p>{{ itineraire.description }}</p>
+            </div>
+
+            <div class="detail-section">
+                <h2>🗺️ Programme détaillé</h2>
+                {% for etape in etapes %}
+                <div class="etape-card">
+                    <div class="etape-heure">{{ etape.heure }}</div>
+                    <div class="etape-content">
+                        <h3>{{ etape.lieu.nom }}</h3>
+                        <p class="etape-categorie">{{ etape.lieu.categorie|upper }} - {{ etape.lieu.quartier }}</p>
+                        <p class="etape-description">{{ etape.lieu.description }}</p>
+                        <p class="etape-notes"><strong>💡 Note :</strong> {{ etape.notes }}</p>
+                        <div class="etape-infos">
+                            <span>⏱️ {{ etape.lieu.duree }}</span>
+                            <span>💰 {{ etape.lieu.prix }}</span>
+                        </div>
+                        <a href="{{ etape.lieu.maps }}" target="_blank" class="btn-maps-small">📍 Google Maps</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="detail-section">
+                <h2>💡 Conseils pratiques</h2>
+                <p class="conseil-box">{{ itineraire.conseils }}</p>
+            </div>
+
+            <div class="detail-actions">
+                <a href="/chatpage?q=Je veux personnaliser l'itinéraire {{ itineraire.nom }}" class="btn-chat-large">💬 Personnaliser cet itinéraire avec KyotoBot</a>
+            </div>
+        </div>
+    </div>
+</body>
+<!-- Navbar fixe -->
+<nav class="navbar">
+    <a href="/" class="navbar-logo">🌸 KyotoBot</a>
+    <div class="navbar-links">
+        <a href="/">Accueil</a>
+        <a href="/chatpage">💬 Chat</a>
+        <a href="/lieux">📍 Lieux</a>
+        <a href="/itineraires">🗺️ Itinéraires</a>
+    </div>
+</nav>
+
+<!-- Animation cerisiers -->
+<div class="sakura-container">
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+</div>
+</html>

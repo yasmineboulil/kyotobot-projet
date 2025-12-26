@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat avec KyotoBot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <!-- Navbar fixe -->
+    <nav class="navbar">
+        <a href="/" class="navbar-logo">🌸 KyotoBot</a>
+        <div class="navbar-links">
+            <a href="/">Accueil</a>
+            <a href="/chatpage" class="active">💬 Chat</a>
+            <a href="/lieux">📍 Lieux</a>
+            <a href="/itineraires">🗺️ Itinéraires</a>
+        </div>
+    </nav>
+
+    <!-- Animation cerisiers -->
+    <div class="sakura-container">
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+        <div class="sakura">🌸</div>
+    </div>
+
+    <div id="chat-main-container">
+
+        <!-- Zone de chat principale -->
+        <div id="chat-content">
+            <!-- Header du chat -->
+            <div id="chat-header">
+                <div class="bot-avatar-large">🤖</div>
+                <div class="bot-info">
+                    <h2>KyotoBot</h2>
+                    <p class="bot-status">En ligne • Expert Kyoto</p>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div id="chat-box">
+                <div class="message-wrapper bot-wrapper">
+                    <div class="avatar">🤖</div>
+                    <div class="bot-message">
+                        <strong>KyotoBot</strong><br>
+                        Konnichiwa ! 👋 Je suis votre guide personnel pour Kyoto.<br><br>
+                        Je peux vous aider à :<br>
+                        • 🗺️ Créer un itinéraire personnalisé<br>
+                        • 🏯 Trouver les meilleurs temples et lieux<br>
+                        • 🍜 Recommander des restaurants<br>
+                        • 🚌 Organiser vos déplacements<br><br>
+                        Parlez-moi de vos envies, budget et durée de séjour !<br>
+                        <em>Astuce : cliquez sur "Inspire-moi" pour une suggestion surprise ✨</em>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indicateur de frappe -->
+            <div id="typing-indicator" style="display: none;">
+                <div class="message-wrapper bot-wrapper">
+                    <div class="avatar">🤖</div>
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone de saisie -->
+            <div id="chat-input-zone">
+                <!-- Boutons rapides contextuels -->
+                <div id="quick-buttons">
+                    <button class="quick-btn" data-query="Découverte temples classiques">🏯 Temples</button>
+                    <button class="quick-btn" data-query="Inspire-moi">✨ Inspire-moi</button>
+                    <button class="quick-btn" data-query="Itinéraire 1 jour">📅 1 jour</button>
+                    <button class="quick-btn" id="btn-reset">🔄 Nouveau</button>
+                </div>
+
+                <!-- Formulaire -->
+                <form id="chat-form">
+                    <input type="text" id="message" placeholder="Ex : J'ai 3h et 40€, je veux visiter un temple et goûter du thé 🍵" autocomplete="off" required>
+                    <button type="submit" id="send-btn">
+                        <span class="send-icon">➤</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById("chat-form");
+        const input = document.getElementById("message");
+        const chatBox = document.getElementById("chat-box");
+        const typingIndicator = document.getElementById("typing-indicator");
+        const sendBtn = document.getElementById("send-btn");
+
+        // Fonction pour ajouter un message utilisateur
+        function addUserMessage(message) {
+            const messageHTML = `
+                <div class="message-wrapper user-wrapper">
+                    <div class="user-message">
+                        <strong>Moi</strong><br>${message}
+                    </div>
+                    <div class="avatar user-avatar">👤</div>
+                </div>
+            `;
+            chatBox.innerHTML += messageHTML;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Fonction pour ajouter un message bot avec effet typewriter
+        function addBotMessage(message) {
+            const messageHTML = `
+                <div class="message-wrapper bot-wrapper">
+                    <div class="avatar">🤖</div>
+                    <div class="bot-message">
+                        <strong>KyotoBot</strong><br><span class="bot-text"></span>
+                    </div>
+                </div>
+            `;
+            chatBox.innerHTML += messageHTML;
+            
+            const botTextElement = chatBox.lastElementChild.querySelector('.bot-text');
+            const parsedMessage = marked.parse(message);
+            botTextElement.innerHTML = parsedMessage;
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Envoyer message
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const userMessage = input.value.trim();
+            if (!userMessage) return;
+
+            // Désactiver l'input
+            input.disabled = true;
+            sendBtn.disabled = true;
+
+            // Afficher message utilisateur
+            addUserMessage(userMessage);
+            input.value = "";
+
+            // Afficher indicateur de frappe
+            typingIndicator.style.display = "block";
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const response = await fetch("/chat", {
+                    method: "POST",
+                    body: new URLSearchParams({ message: userMessage })
+                });
+                const data = await response.json();
+
+                // Masquer indicateur
+                typingIndicator.style.display = "none";
+
+                // Afficher réponse
+                addBotMessage(data.reply);
+            } catch (error) {
+                typingIndicator.style.display = "none";
+                addBotMessage("❌ Désolé, une erreur s'est produite. Veuillez réessayer.");
+            }
+
+            // Réactiver l'input
+            input.disabled = false;
+            sendBtn.disabled = false;
+            input.focus();
+        });
+
+        // Boutons rapides
+        document.querySelectorAll('.quick-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.id === 'btn-reset') {
+                    chatBox.innerHTML = `
+                        <div class="message-wrapper bot-wrapper">
+                            <div class="avatar">🤖</div>
+                            <div class="bot-message">
+                                <strong>KyotoBot</strong><br>
+                                Conversation réinitialisée ! Comment puis-je vous aider ? 😊
+                            </div>
+                        </div>
+                    `;
+                    input.value = "";
+                } else {
+                    input.value = btn.dataset.query;
+                    form.dispatchEvent(new Event("submit"));
+                }
+            });
+        });
+
+        // Focus automatique sur l'input
+        input.focus();
+
+        // Lecture des paramètres URL pour pré-remplir (connexion avec autres pages)
+        const urlParams = new URLSearchParams(window.location.search);
+        const prefilledMessage = urlParams.get('q');
+        if (prefilledMessage) {
+            input.value = decodeURIComponent(prefilledMessage);
+            setTimeout(() => form.dispatchEvent(new Event("submit")), 500);
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+

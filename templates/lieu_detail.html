@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ lieu.nom }} - Kyoto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="main-container">
+        <!-- Header -->
+        <header>
+            <div class="header-container">
+                <span class="flower">🌸</span>
+                <h1>{{ lieu.nom }}</h1>
+                <span class="flower">🌸</span>
+            </div>
+            <a href="/chatpage?q=Parle-moi de {{ lieu.nom }} en détail" class="btn-chat-large">💬 Demander plus d'infos à KyotoBot</a>
+        </header>
+
+        <!-- Détails du lieu -->
+        <div id="lieu-detail">
+            <div class="detail-section">
+                <h2>📍 Informations pratiques</h2>
+                <p><strong>Catégorie :</strong> {{ lieu.categorie|capitalize }}</p>
+                <p><strong>Quartier :</strong> {{ lieu.quartier }}</p>
+                <p><strong>Durée de visite :</strong> {{ lieu.duree }}</p>
+                <p><strong>Prix :</strong> {{ lieu.prix }}</p>
+            </div>
+
+            <div class="detail-section">
+                <h2>📝 Description</h2>
+                <p>{{ lieu.description }}</p>
+            </div>
+
+            <div class="detail-section">
+                <h2>💡 Conseil du guide</h2>
+                <p class="conseil-box">{{ lieu.conseil }}</p>
+            </div>
+
+            <div class="detail-actions">
+                <a href="{{ lieu.maps }}" target="_blank" class="btn-maps-large">📍 Voir sur Google Maps</a>
+                <a href="/chatpage" class="btn-chat-large">💬 Demander plus d'infos à KyotoBot</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!-- Navbar fixe -->
+<nav class="navbar">
+    <a href="/" class="navbar-logo">🌸 KyotoBot</a>
+    <div class="navbar-links">
+        <a href="/">Accueil</a>
+        <a href="/chatpage">💬 Chat</a>
+        <a href="/lieux">📍 Lieux</a>
+        <a href="/itineraires">🗺️ Itinéraires</a>
+    </div>
+</nav>
+
+<!-- Animation cerisiers -->
+<div class="sakura-container">
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+</div>
+</html>

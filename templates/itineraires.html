@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Itinéraires - Kyoto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="main-container">
+        <header>
+            <div class="header-container">
+                <span class="flower">🌸</span>
+                <h1>Itinéraires prédéfinis</h1>
+                <span class="flower">🌸</span>
+            </div>
+            <p>Choisissez un itinéraire clé en main pour découvrir Kyoto</p>
+            <a href="/" class="btn-retour">← Retour à l'accueil</a>
+            <a href="/chatpage" class="btn-retour">💬 Personnaliser avec KyotoBot</a>
+        </header>
+
+        <div id="itineraires-grid">
+            {% for itineraire in itineraires %}
+            <div class="itineraire-card">
+                <div class="itineraire-emoji">{{ itineraire.emoji }}</div>
+                <h3>{{ itineraire.nom }}</h3>
+                <div class="itineraire-infos">
+                    <span>⏱️ {{ itineraire.duree }}</span>
+                    <span>💰 {{ itineraire.budget }}</span>
+                </div>
+                <p class="itineraire-description">{{ itineraire.description }}</p>
+                <a href="/itineraire/{{ itineraire.id }}" class="btn-voir-itineraire">📋 Voir l'itinéraire détaillé</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+<!-- Navbar fixe -->
+<nav class="navbar">
+    <a href="/" class="navbar-logo">🌸 KyotoBot</a>
+    <div class="navbar-links">
+        <a href="/">Accueil</a>
+        <a href="/chatpage">💬 Chat</a>
+        <a href="/lieux">📍 Lieux</a>
+        <a href="/itineraires">🗺️ Itinéraires</a>
+    </div>
+</nav>
+
+<!-- Animation cerisiers -->
+<div class="sakura-container">
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+</div>
+</html>

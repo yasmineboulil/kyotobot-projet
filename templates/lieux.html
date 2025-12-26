@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Guide des lieux - Kyoto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="main-container">
+        <!-- Header -->
+        <header>
+            <div class="header-container">
+                <span class="flower">🌸</span>
+                <h1>Guide des lieux de Kyoto</h1>
+                <span class="flower">🌸</span>
+            </div>
+            <p>Découvrez les incontournables de Kyoto</p>
+            <a href="/" class="btn-retour">← Retour à l'accueil</a>
+            <a href="/chatpage" class="btn-retour">💬 Parler avec KyotoBot</a>
+        </header>
+
+        <!-- Filtres par catégorie -->
+        <div id="filtres">
+            <h3>Filtrer par catégorie :</h3>
+            <div class="filter-buttons">
+                <a href="/lieux" class="filter-btn {% if not categorie_active or categorie_active == 'tous' %}active{% endif %}">
+                    🌸 Tous
+                </a>
+                {% for cat in categories %}
+                <a href="/lieux?categorie={{ cat.id }}" class="filter-btn {% if categorie_active == cat.id %}active{% endif %}">
+                    {{ cat.emoji }} {{ cat.nom }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Liste des lieux -->
+        <div id="lieux-grid">
+            {% for lieu in lieux %}
+            <div class="lieu-card">
+                <h3>{{ lieu.nom }}</h3>
+                <p class="lieu-categorie">{{ lieu.categorie|upper }} - {{ lieu.quartier }}</p>
+                <p class="lieu-description">{{ lieu.description }}</p>
+                
+                <div class="lieu-infos">
+                    <span>⏱️ {{ lieu.duree }}</span>
+                    <span>💰 {{ lieu.prix }}</span>
+                </div>
+                
+                <div class="lieu-actions">
+                    <a href="{{ lieu.maps }}" target="_blank" class="btn-maps">📍 Google Maps</a>
+                    <a href="/lieu/{{ lieu.id }}" class="btn-detail">👁️ Détails</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if lieux|length == 0 %}
+        <p style="text-align: center; margin-top: 50px;">Aucun lieu trouvé dans cette catégorie.</p>
+        {% endif %}
+    </div>
+</body>
+
+<!-- Navbar fixe -->
+<nav class="navbar">
+    <a href="/" class="navbar-logo">🌸 KyotoBot</a>
+    <div class="navbar-links">
+        <a href="/">Accueil</a>
+        <a href="/chatpage">💬 Chat</a>
+        <a href="/lieux">📍 Lieux</a>
+        <a href="/itineraires">🗺️ Itinéraires</a>
+    </div>
+</nav>
+
+<!-- Animation cerisiers -->
+<div class="sakura-container">
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+    <div class="sakura">🌸</div>
+</div>
+</html>
