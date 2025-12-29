@@ -34,7 +34,7 @@ personnalisés en fonction du budget, de la durée de séjour et des centres d'i
 
 1. **Cloner le dépôt**
 ```bash
-   git clone https://github.com/VOTRE-PSEUDO/kyotobot-projet.git
+   git clone https://github.com/yasmineboulil/kyotobot-projet.git
    cd kyotobot-projet
 ```
 
