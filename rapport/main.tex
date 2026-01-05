@@ -1,0 +1,872 @@
+\documentclass[a4paper, 12pt, twoside]{article}
+\usepackage[utf8]{inputenc}		% LaTeX, comprend les accents !
+\usepackage[T1]{fontenc}		
+\usepackage[french]{babel}
+\usepackage{lmodern}
+\usepackage{ae,aecompl}
+\usepackage[top=2.5cm, bottom=2cm, 
+			left=3cm, right=2.5cm,
+			headheight=15pt]{geometry}
+\usepackage{graphicx}
+\usepackage{eso-pic}	% Nécessaire pour mettre des images en arrière plan
+\usepackage{array} 
+\usepackage{hyperref}
+\input{pagedegarde}
+
+\title{KyotoBot - Assistant touristique intelligent pour Kyoto}
+\entreprise{Université Paris Nanterre}
+\datedebut{22 novembre 2024}
+\datefin{6 janvier 2025}
+\membrea{Yasmine Boulil - N° 45004303}
+\membreb{Kholef Achour - N° 45006563}
+\membrec{}
+\membred{}
+\membree{}
+
+\begin{document}
+\pagedegarde
+
+\section*{Remerciements}
+Nous tenons à remercier notre enseignant pour ses conseils techniques et méthodologiques prodigués.
+
+Nous remercions également Anthropic et Mistral AI pour la mise à disposition de leurs API d'intelligence artificielle, qui ont été essentielles à la réalisation de ce projet.
+
+\textbf{Lien du dépôt GitHub :} \url{https://github.com/yasmineboulil/kyotobot-projet.git}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introduction}
+Le tourisme à Kyoto, ancienne capitale impériale du Japon, attire chaque année des millions de visiteurs désireux de découvrir ses temples millénaires, ses jardins zen et sa culture traditionnelle. Face à l'abondance de sites touristiques (plus de 2000 temples et sanctuaires), les visiteurs se trouvent souvent démunis pour organiser efficacement leur séjour en fonction de leurs contraintes de temps et de budget.
+
+Ce projet vise à développer un assistant touristique intelligent, KyotoBot, capable de générer des itinéraires personnalisés grâce à l'intelligence artificielle. L'application combine une interface web intuitive, une base de données structurée de lieux emblématiques, et un chatbot conversationnel alimenté par l'API Mistral AI.
+
+L'objectif principal est de permettre aux utilisateurs de planifier leur visite de Kyoto de manière optimale, en tenant compte de leurs préférences (temples, gastronomie, nature), de leur budget et de la durée de leur séjour. Le système extrait automatiquement ces informations des messages utilisateurs et propose des recommandations adaptées.
+
+Ce rapport présente l'architecture technique du projet, les choix technologiques effectués, le travail réalisé, ainsi qu'une réflexion sur l'utilisation de l'intelligence artificielle tant dans le développement que dans le fonctionnement de l'application.
+
+\section{Environnement de travail}
+
+\subsection{Matériel et logiciels}
+Le développement du projet a été réalisé dans l'environnement suivant :
+\begin{itemize}
+\item \textbf{Système d'exploitation :} Windows 11
+\item \textbf{Éditeur de code :} Visual Studio Code avec extensions Python et HTML/CSS
+\item \textbf{Navigateurs de test :} Google Chrome, Mozilla Firefox
+\item \textbf{Gestionnaire de versions :} Git et GitHub
+\item \textbf{Environnement Python :} Python 3.10+
+\item \textbf{Gestionnaire de paquets :} pip
+\end{itemize}
+
+\subsection{Outils de développement}
+\begin{itemize}
+\item \textbf{Framework web :} Flask (Python) pour le backend
+\item \textbf{API d'intelligence artificielle :} Mistral AI (mistral-small-latest)
+\item \textbf{Assistant de développement :} Claude (Anthropic) pour l'aide au code et l'architecture
+\item \textbf{Documentation :} README.md (Markdown)
+\item \textbf{Design :} CSS3 avec animations et transitions
+\end{itemize}
+
+\subsection{Méthodologie de travail}
+Le projet a été développé de manière itérative :
+\begin{enumerate}
+\item Conception de l'architecture et choix des technologies
+\item Développement du chatbot et intégration de l'API Mistral
+\item Création de la base de données de lieux et itinéraires
+\item Développement de l'interface utilisateur
+\item Tests et amélioration du design
+\item Rédaction de la documentation
+\end{enumerate}
+
+\section{Description du projet et objectifs}
+
+\subsection{Problématique}
+Kyoto compte plus de 2000 temples et sanctuaires, ainsi qu'une multitude de jardins, restaurants et quartiers traditionnels. Les touristes, souvent limités en temps (1 à 3 jours en moyenne) et en budget, ont du mal à :
+\begin{itemize}
+\item Identifier les lieux correspondant à leurs centres d'intérêt
+\item Optimiser leurs déplacements pour minimiser les temps de transport
+\item Estimer les coûts totaux de leur visite
+\item Obtenir des conseils pratiques adaptés à leurs contraintes
+\end{itemize}
+
+Les guides touristiques traditionnels offrent des informations exhaustives mais peu personnalisées. Les applications existantes manquent souvent d'intelligence conversationnelle pour comprendre les demandes en langage naturel.
+
+\subsection{Objectifs du projet}
+Notre projet vise à créer un assistant touristique intelligent qui :
+\begin{enumerate}
+\item \textbf{Comprend les demandes en langage naturel :} L'utilisateur peut poser des questions comme "J'ai 50€ et 4 heures, je veux voir des temples", et le système extrait automatiquement les informations pertinentes.
+
+\item \textbf{Génère des itinéraires personnalisés :} En fonction du budget, de la durée et des centres d'intérêt détectés, l'application propose un parcours optimisé avec horaires, durées de visite et coûts.
+
+\item \textbf{Base de données riche et structurée :} 35 lieux emblématiques de Kyoto sont répertoriés avec descriptions détaillées, prix d'entrée, conseils pratiques et liens vers Google Maps. Les lieux sont catégorisés (temples, jardins, restaurants, quartiers, marchés, hébergements).
+
+\item \textbf{Réponses adaptatives :} Le chatbot adapte le format de ses réponses selon le type de demande : réponse courte pour une question simple, itinéraire détaillé pour une demande de planification.
+
+\item \textbf{Navigation fluide :} Connexions intelligentes entre les différentes sections (possibilité d'interroger le chatbot depuis une page de lieu, pré-remplissage des questions).
+
+\subsection{Public cible}
+L'application s'adresse principalement aux touristes francophones visitant Kyoto pour la première fois, avec des contraintes de temps et de budget variables.
+
+\section{Bibliothèques, Outils et technologies}
+
+\subsection{Architecture générale}
+
+Le projet suit une architecture MVC (Modèle-Vue-Contrôleur) adaptée à Flask :
+
+\begin{itemize}
+\item \textbf{Modèle :} Base de données structurée en Python (data.py) contenant lieux et itinéraires
+\item \textbf{Vue :} Templates HTML avec Jinja2 pour le rendu dynamique
+\item \textbf{Contrôleur :} Routes Flask organisées en blueprints (home, chat, lieux, itinéraires)
+\item \textbf{Services :} Logique métier encapsulée (ai\_service.py pour l'interaction avec Mistral AI)
+\end{itemize}
+
+\subsection{Backend : Flask}
+
+Flask est un micro-framework web Python choisi pour sa simplicité et sa flexibilité. Il permet de créer rapidement des applications web sans imposer de structure rigide.
+
+\textbf{Fonctionnalités utilisées :}
+
+\begin{itemize}
+\item \textbf{Blueprints :} Organisation modulaire du code permettant de séparer les routes par fonctionnalité (home, chat, lieux, itinéraires). Chaque blueprint est un module indépendant facilitant la maintenance.
+
+\item \textbf{Routes :} Gestion des URLs et des requêtes HTTP (GET pour l'affichage des pages, POST pour les interactions du chatbot).
+
+\item \textbf{Templates Jinja2 :} Système de templating permettant d'injecter dynamiquement des données Python dans les pages HTML (boucles for pour afficher les lieux, conditions if pour les filtres).
+
+\item \textbf{Fichiers statiques :} Service automatique des fichiers CSS, JavaScript et images via le dossier static/.
+\end{itemize}
+
+\textbf{Avantages de Flask :}
+
+\begin{itemize}
+\item Courbe d'apprentissage rapide, idéal pour un projet pédagogique
+\item Grande communauté et documentation abondante en ligne
+\item Léger et performant pour une application de taille moyenne
+\item Extensible via des extensions (Flask-SQLAlchemy, Flask-Login si évolution future)
+\end{itemize}
+
+\subsection{Frontend : HTML5, CSS3, JavaScript}
+
+\subsubsection{HTML5}
+
+Structure sémantique des pages avec balises modernes (header, nav, section, article) améliorant l'accessibilité et le référencement.
+
+\subsubsection{CSS3}
+
+Design moderne intégrant :
+
+\begin{itemize}
+\item \textbf{Animations CSS :} @keyframes pour les cerisiers tombants (effet visuel japonais), transitions fluides sur les cartes et boutons
+
+\item \textbf{Flexbox et Grid :} Positionnement responsive des éléments (grille de lieux, cartes d'itinéraires, layout du chatbot)
+
+\item \textbf{Dégradés linéaires :} Navbar avec dégradé noir-rouge-noir, boutons avec dégradés colorés
+
+\item \textbf{Media queries :} Adaptation mobile et tablette (breakpoints à 768px et 1024px)
+
+\item \textbf{Effets hover :} Transformations au survol (scale, translateY) pour améliorer l'interactivité
+
+\item \textbf{Palette de couleurs :} Rouge japonais traditionnel (\#8B0000, \#c62828), noir (\#1a1a1a) et or (\#D4AF37) pour un rendu mature et élégant
+\end{itemize}
+
+\subsubsection{JavaScript}
+
+\begin{itemize}
+\item \textbf{Gestion des événements :} Écoute des clics, soumission de formulaires, interactions utilisateur
+
+\item \textbf{Fetch API :} Requêtes HTTP asynchrones vers le backend Flask pour envoyer les messages du chat et recevoir les réponses de l'IA sans recharger la page
+
+\item \textbf{Manipulation du DOM :} Ajout dynamique des messages dans la conversation, affichage de l'indicateur "en train d'écrire"
+
+\item \textbf{Marked.js :} Bibliothèque pour convertir le Markdown des réponses de l'IA en HTML formaté (listes, gras, italique, liens)
+
+\item \textbf{Paramètres URL :} Récupération du paramètre \texttt{?q=} pour pré-remplir le chat depuis d'autres pages
+\end{itemize}
+
+
+\subsection{Intelligence Artificielle : Mistral AI}
+
+\subsubsection{Choix du modèle}
+
+Notre chatbot repose sur l'API Mistral AI, spécifiquement le modèle \texttt{mistral-small-latest}. Ce choix s'explique par :
+
+\begin{itemize}
+\item \textbf{Performance/coût :} Équilibre optimal pour un projet étudiant (coût raisonnable, performance suffisante)
+\item \textbf{Compréhension du français :} Excellente maîtrise de la langue française, cruciale pour notre public cible
+\item \textbf{Latence acceptable :} Réponses rapides (2-5 secondes) pour une expérience chatbot fluide
+\item \textbf{Suivre des instructions :} Capacité à respecter des prompts système complexes (prompt engineering)
+\end{itemize}
+
+\subsubsection{Architecture de l'IA conversationnelle}
+
+\textbf{1. Prompt engineering}
+
+Nous avons conçu un prompt système de 50 lignes définissant précisément :
+
+\begin{itemize}
+\item Le rôle de KyotoBot (guide touristique expert de Kyoto uniquement)
+\item Les règles de réponse (analyser budget/durée/intérêts, proposer itinéraires optimisés)
+\item La détection du type de demande (question simple vs demande de planification)
+\item Les formats de réponse attendus selon le type de demande
+\item La liste des 35 lieux disponibles dans la base de données
+\end{itemize}
+
+\textbf{2. Extraction automatique d'informations}
+
+Avant d'envoyer le message à l'API, notre système analyse le texte utilisateur avec des expressions régulières (regex) pour extraire :
+
+\begin{itemize}
+\item \textbf{Budget :} Patterns \texttt{(\textbackslash d+)\textbackslash s*€}, \texttt{(\textbackslash d+)\textbackslash s*euros?}, \texttt{(\textbackslash d+)\textbackslash s*¥}
+
+\item \textbf{Durée :} Patterns \texttt{(\textbackslash d+)\textbackslash s*jours?}, \texttt{(\textbackslash d+)\textbackslash s*heures?}, \texttt{(\textbackslash d+)h}
+
+\item \textbf{Centres d'intérêt :} Détection de mots-clés (temple, jardin, restaurant, nature, culture, shopping)
+
+\item \textbf{Période de visite :} Détection de saisons (printemps/cerisiers, automne/momiji, été, hiver)
+\end{itemize}
+
+Cette extraction permet d'enrichir le contexte envoyé à l'IA sans que l'utilisateur ait à remplir un formulaire structuré.
+
+\textbf{3. Enrichissement du contexte}
+
+Le message utilisateur est enrichi avec :
+
+\begin{itemize}
+\item Les informations extraites formatées en \texttt{[CONTEXTE DÉTECTÉ]}
+\item Les lieux pertinents de la base de données selon les intérêts détectés (filtrage par catégorie)
+\item L'historique complet de la conversation pour maintenir la cohérence des échanges
+\end{itemize}
+
+\textbf{4. Gestion de la mémoire conversationnelle}
+
+L'historique des messages (utilisateur et assistant) est maintenu en mémoire durant toute la session. Cela permet au chatbot de faire référence aux échanges précédents et d'affiner progressivement ses recommandations.
+
+\textbf{5. Recommandations hybrides}
+
+L'approche combine :
+
+\begin{itemize}
+\item \textbf{Connaissances générales :} L'IA Mistral possède des connaissances générales sur Kyoto (culture, histoire, géographie)
+\item \textbf{Base de données structurée :} Nos 35 lieux avec prix, horaires et conseils précis garantissent des informations factuellement correctes
+\end{itemize}
+
+Cette hybridation évite les hallucinations de l'IA (invention de lieux inexistants) tout en bénéficiant de sa capacité de génération de langage naturel.
+
+\textbf{Exemple de traitement complet :}
+
+Message utilisateur : \textit{"J'ai 60€ et une journée, j'adore les temples"}
+
+\begin{enumerate}
+\item \textbf{Extraction :} Budget=60€, Durée=1 jour, Intérêt=temples
+\item \textbf{Filtrage base de données :} Sélection des 7 temples disponibles
+\item \textbf{Enrichissement :} Ajout du contexte + liste des temples (Kiyomizu-dera, Fushimi Inari, Kinkaku-ji, etc.)
+\item \textbf{Envoi à Mistral AI :} Prompt système + historique + message enrichi
+\item \textbf{Réception :} Itinéraire personnalisé avec horaires précis, temps de transport, budget détaillé (entrées + repas), conseils pratiques
+\end{enumerate}
+
+\subsection{Utilisation d'un assistant IA dans le développement}
+
+\subsubsection{Contexte et méthodologie}
+
+Dans le cadre de ce projet, nous avons exploré l'utilisation de Claude (Anthropic) comme outil d'aide au développement, conformément aux pratiques modernes de l'industrie logicielle où les développeurs s'appuient sur des assistants IA pour optimiser leur productivité.
+
+\textbf{Méthodologie adoptée :}
+
+\begin{enumerate}
+\item \textbf{Phase de conception :} Nous avons défini nous-mêmes l'architecture globale du projet (MVC avec Flask, base de données structurée, intégration API Mistral AI, organisation en blueprints). Les décisions d'architecture ont été prises après réflexion sur nos contraintes et objectifs.
+
+\item \textbf{Validation technique :} Claude a servi de référence technique pour valider nos choix et suggérer des bonnes pratiques reconnues (séparation des responsabilités, gestion d'erreurs, organisation du code).
+
+\item \textbf{Accélération du développement :} Pour certaines tâches répétitives ou techniques (écriture de regex, structure CSS complexe, formatage de données), l'IA a permis de gagner du temps sur l'implémentation.
+
+\item \textbf{Résolution de problèmes :} Lorsque nous rencontrions des bugs (conflits z-index, problèmes responsive, gestion des erreurs API), Claude aidait à identifier les causes et proposer des pistes de solution que nous testions et adaptions.
+\end{enumerate}
+
+\textbf{Approche critique maintenue :}
+
+\begin{itemize}
+\item Chaque portion de code générée avec l’aide de l’intelligence artificielle a été relue, comprise et testée avant d’être intégrée au projet final.
+\item Les suggestions inadaptées à nos besoins ont été modifiées ou rejetées
+\item Nous avons effectué nos propres recherches complémentaires pour comprendre les concepts (documentation Flask, tutoriels CSS Grid, spécifications API Mistral)
+\end{itemize}
+
+\textbf{Exemples concrets d'utilisation :}
+
+\begin{itemize}
+\item \textbf{Architecture :} Consultation sur l'organisation des blueprints Flask et la séparation des responsabilités
+\item \textbf{Conception du prompt IA :} amélioration progressive du prompt système afin de guider le modèle vers des réponses structurées et cohérentes, en lien avec les données disponibles dans la base.
+\item \textbf{Extraction d'informations :} Aide à la conception des patterns regex pour détecter budget et durée dans les messages
+\item \textbf{Design CSS :} Suggestions sur la palette de couleurs (rouge japonais + noir + or) et les animations
+\item \textbf{Débogage :} Identification d'un problème de z-index empêchant les clics sur les boutons du chat
+\end{itemize}
+
+\textbf{Bilan :}
+
+L'utilisation d'un assistant IA s'est révélée bénéfique pour accélérer le développement tout en maintenant une démarche pédagogique active. Cela reflète les pratiques actuelles de l'industrie où les développeurs utilisent ces outils comme compléments à leurs compétences. Cette expérience nous a permis de développer notre capacité à évaluer critiquement les suggestions automatiques et à les adapter à nos besoins spécifiques.
+
+\subsection{Base de données}
+
+La base de données est implémentée sous forme de structures Python dans le fichier \texttt{data.py} :
+
+\begin{itemize}
+\item \textbf{LIEUX :} Liste de 35 dictionnaires Python, chacun contenant :
+\begin{itemize}
+\item id (identifiant unique)
+\item nom (nom du lieu)
+\item categorie (temple, jardin, marche, quartier, restaurant, hebergement)
+\item description (texte détaillé)
+\item duree (temps de visite estimé)
+\item prix (coût d'entrée ou fourchette de prix)
+\item conseil (recommandations pratiques)
+\item quartier (localisation géographique)
+\item maps (lien Google Maps)
+\end{itemize}
+
+\item \textbf{ITINERAIRES :} Liste de 5 dictionnaires d'itinéraires prédéfinis, chacun contenant :
+\begin{itemize}
+\item id, nom, emoji, duree, budget
+\item description (présentation de l'itinéraire)
+\item etapes (liste détaillée des lieux avec horaires et notes)
+\item conseils (recommandations spécifiques)
+\end{itemize}
+
+\item \textbf{CATEGORIES :} Liste des 6 catégories avec id, nom et emoji associé
+\end{itemize}
+
+Ce format Python facilite la manipulation des données (filtrage, recherche) tout en restant lisible et maintenable. Pour une évolution future, la migration vers une base de données relationnelle (SQLite, PostgreSQL) serait envisageable.
+
+
+\section{Travail réalisé}
+
+\subsection{Fonctionnalités réalisées}
+
+Toutes les fonctionnalités prévues ont été implémentées avec succès :
+
+\textbf{1. Page d'accueil enrichie} ✅
+
+\begin{itemize}
+\item Interface animée avec cerisiers tombants et dégradé zen
+\item Section explicative présentant les 3 fonctionnalités principales (Chat, Lieux, Itinéraires)
+\item Cartes visuelles avec icônes et exemples concrets
+\item Trois boutons d'action clairement identifiés
+\item Navbar fixe pour navigation rapide
+\end{itemize}
+
+\textbf{2. Chatbot intelligent (KyotoBot)} ✅
+
+\begin{itemize}
+\item Conversation en langage naturel sans formulaire contraint
+\item Extraction automatique de budget, durée, intérêts et période de visite
+\item Réponses adaptatives : courtes pour questions simples, détaillées pour demandes de planification
+\item Mémoire conversationnelle maintenue durant toute la session
+\item Gestion d'erreurs : refus poli si demande hors-sujet Kyoto
+\item Interface moderne avec indicateur "en train d'écrire"
+\item Boutons de suggestions rapides pour faciliter la prise en main
+\end{itemize}
+
+\textbf{3. Guide des lieux} ✅
+
+\begin{itemize}
+\item Base de données de 35 lieux emblématiques répartis en 6 catégories
+\item Système de filtres par catégorie (temples, jardins, marchés, quartiers, restaurants, hébergements)
+\item Affichage en grille responsive avec cartes visuelles
+\item Page de détail pour chaque lieu avec informations complètes
+\item Liens Google Maps pour chaque lieu
+\item Bouton "Demander plus d'infos à KyotoBot" pré-remplissant le chat avec une question sur le lieu
+\end{itemize}
+
+\textbf{4. Itinéraires prédéfinis} ✅
+
+\begin{itemize}
+\item 5 itinéraires thématiques complets (Kyoto en 1 jour, Circuit temples, Kyoto gourmand, Nature \& Zen, Kyoto Instagram)
+\item Chaque itinéraire avec présentation, durée totale, budget estimé
+\item Détails pour chaque étape : horaire, lieu, durée, prix, notes spécifiques
+\item Conseils pratiques globaux pour chaque itinéraire
+\item Possibilité de personnaliser l'itinéraire via le chatbot
+\end{itemize}
+
+\textbf{5. Design et navigation} ✅
+
+\begin{itemize}
+\item Navbar fixe avec navigation fluide entre toutes les pages
+\item Palette de couleurs mature : rouge japonais, noir, or
+\item Animations CSS : cerisiers tombants, transitions fluides, effets hover sophistiqués
+\item Responsive design : adaptation mobile et tablette avec media queries
+\item Connexions intelligentes entre pages (lieux → chat, itinéraires → chat)
+\end{itemize}
+
+
+\subsection{Fonctionnalités non réalisées}
+\begin{itemize}
+\item \textbf{Système de favoris :} Permettre de sauvegarder des lieux préférés (non prioritaire pour un MVP)
+\item \textbf{Export PDF d'itinéraire :} Télécharger un itinéraire en PDF (complexité technique vs temps disponible)
+\item \textbf{Mode multilingue :} Anglais et japonais (focus sur le public francophone)
+\end{itemize}
+
+\subsection{Répartition du travail}
+\textbf{Yasmine Boulil :} Développement du backend (Flask, routes, services), intégration de l'API Mistral AI, design et animations, documentation (rapport).
+
+\textbf{Kholef Achour :} Développement du frontend (HTML/CSS/JS), documentation (README), tests et débogage.
+
+\section{Difficultés rencontrées} 
+
+\subsection{Intégration de l'API Mistral AI}
+
+\textbf{Problème :} Compréhension initiale du format des requêtes API et de la gestion du contexte conversationnel. La documentation était claire sur les appels basiques mais moins sur la gestion d'un historique conversationnel.
+
+\textbf{Solution :} Étude approfondie de la documentation officielle Mistral AI, consultation d'exemples sur GitHub, tests itératifs avec différents formats de prompts. Implémentation d'un système de gestion d'historique stockant tous les échanges (utilisateur + assistant) et les réinjectant à chaque nouvelle requête.
+
+\textbf{Apprentissage :} Importance de bien structurer le prompt système et de maintenir un historique cohérent pour des conversations naturelles.
+
+\subsection{Extraction automatique d'informations}
+
+\textbf{Problème :} Les expressions régulières initiales ne capturaient pas toutes les variations de formulation. Par exemple, "trois heures" n'était pas détecté (seulement "3h" ou "3 heures").
+
+\textbf{Solution :} Création de multiples patterns regex pour couvrir les différentes formulations possibles. Ajout de patterns pour les nombres en toutes lettres aurait nécessité un dictionnaire complet, nous avons donc privilégié les formulations numériques les plus courantes.
+
+\textbf{Apprentissage :} Les regex sont puissantes mais limitées pour le traitement du langage naturel. 
+
+\subsection{Gestion des z-index et superposition d'éléments}
+\textbf{Problème :} Les cerisiers animés (décoration) bloquaient les clics sur les boutons du chatbot. L'utilisateur ne pouvait pas interagir avec l'interface.
+\textbf{Solution :} Ajustement des propriétés CSS : \texttt{z-index} pour contrôler l'ordre d'empilement, \texttt{position: relative/absolute} pour le positionnement, et surtout \texttt{pointer-events: none} sur les éléments purement décoratifs pour qu'ils n'interceptent pas les événements souris.
+\textbf{Apprentissage :} Importance de bien comprendre le contexte d'empilement CSS et l'interaction entre position, z-index et pointer-events.
+\subsection{Performance et temps de réponse du chatbot}
+\textbf{Problème :} Temps de réponse parfois long de l'API Mistral (3-7 secondes), donnant l'impression que l'application était figée.
+\textbf{Solution :} Ajout d'un indicateur visuel "en train d'écrire..." avec animation de points pulsants. Désactivation temporaire du champ de saisie pendant le traitement. Optimisation des prompts pour réduire la longueur des réponses générées (moins de tokens = temps de génération réduit).
+\textbf{Apprentissage :} L'expérience utilisateur nécessite un feedback visuel constant. Même si le traitement est long, l'utilisateur doit savoir que quelque chose se passe.
+\subsection{Débogage du JavaScript asynchrone}
+\textbf{Problème :} Gestion des erreurs lors des appels Fetch API. Si l'API Mistral était indisponible ou renvoyait une erreur, l'application ne réagissait pas clairement.
+\textbf{Solution :} Implémentation de blocs try-catch autour des appels asynchrones. Ajout de messages d'erreur utilisateur conviviaux ("Désolé, une erreur s'est produite. Veuillez réessayer."). Log des erreurs dans la console pour faciliter le débogage.
+\textbf{Apprentissage :} La gestion d'erreurs robuste est cruciale pour les applications web utilisant des API externes. Ne jamais supposer que tout fonctionnera parfaitement.
+
+\section{Bilan}
+\subsection{Conclusion}
+Ce projet nous a permis de développer une application web complète intégrant une intelligence artificielle conversationnelle. Au-delà de l'aspect technique, nous avons acquis des compétences variées touchant plusieurs domaines de l'informatique.
+\textbf{Compétences techniques acquises :}
+\begin{itemize}
+\item \textbf{Développement backend :} Maîtrise de Flask, compréhension de l'architecture MVC, gestion des routes et blueprints
+\item \textbf{Intégration d'API externes :} Communication avec l'API Mistral AI, gestion des requêtes HTTP, traitement des réponses JSON
+\item \textbf{Traitement du langage naturel :} Prompt engineering, extraction d'informations avec regex, gestion du contexte conversationnel
+\item \textbf{Développement frontend :} HTML5 sémantique, CSS3 avancé (animations, Grid, Flexbox), JavaScript asynchrone (Fetch API, manipulation DOM)
+\item \textbf{Design d'interface :} Conception d'une expérience utilisateur cohérente, responsive design, animations fluides
+\item \textbf{Gestion de projet :} Organisation du code, versioning Git, documentation
+\end{itemize}
+\textbf{Points forts du projet :}
+\begin{itemize}
+\item \textbf{Innovation :} L'approche hybride (IA générative + base de données structurée) garantit des recommandations à la fois créatives et factuellement correctes
+\item \textbf{Expérience utilisateur :} L'extraction automatique d'informations évite les formulaires fastidieux. L'utilisateur interagit naturellement en langage courant.
+\item \textbf{Complétude :} Le site couvre l'ensemble du parcours touristique (planification via chat, exploration des lieux, découverte d'itinéraires)
+\item \textbf{Design soigné :} Interface moderne et élégante reflétant l'esthétique japonaise
+\end{itemize}
+\textbf{Réflexion sur l'utilisation de l'IA :}
+L'utilisation de Claude comme assistant de développement a été une expérience formatrice. Elle nous a appris à :
+\begin{itemize}
+\item Évaluer critiquement les suggestions automatiques
+\item Adapter les solutions proposées à nos besoins spécifiques
+\item Maintenir une démarche d'apprentissage active malgré l'aide extérieure
+\end{itemize}
+
+Cette approche reflète les pratiques actuelles de l'industrie où les développeurs s'appuient sur des outils d'IA pour optimiser leur productivité tout en conservant leur expertise et leur capacité de décision.
+
+\subsection{Perspectives d'évolution}
+Plusieurs améliorations pourraient être apportées au projet dans une version future :
+\textbf{Enrichissement de la base de données :}
+\begin{itemize}
+\item Passer de 35 à 100+ lieux avec photos
+\item Ajouter des hébergements variés (ryokans, hôtels, auberges)
+\item Intégrer des événements saisonniers (festivals, illuminations)
+\item Enrichir avec avis et notes d'utilisateurs
+\end{itemize}
+\textbf{Personnalisation avancée :}
+\begin{itemize}
+\item Système de comptes utilisateurs avec historique des conversations
+\item Sauvegarde des préférences et suggestions basées sur l'historique
+\item Système de favoris avec localStorage ou base de données
+\item Recommandations collaboratives (popularité des lieux)
+\end{itemize}
+\textbf{Fonctionnalités collaboratives :}
+\begin{itemize}
+\item Partage d'itinéraires entre utilisateurs (génération de liens partageables)
+\item Système d'évaluation et de commentaires sur les lieux
+\item Forum ou section Q&A pour la communauté
+\end{itemize}
+\textbf{Optimisation des déplacements :}
+\begin{itemize}
+\item Intégration d'une API de calcul d'itinéraires (Google Maps Directions API)
+\item Optimisation automatique de l'ordre de visite selon la géolocalisation
+\item Estimation précise des temps de transport (bus, métro, marche)
+\item Affichage sur carte interactive avec tracé de l'itinéraire
+\end{itemize}
+\textbf{Accessibilité et internationalisation :}
+\begin{itemize}
+\item Mode hors-ligne avec cache des informations essentielles (PWA)
+\item Support multilingue (anglais, japonais) avec modèle IA multilingue
+\item Mode sombre pour réduire la fatigue oculaire
+\item Amélioration de l'accessibilité (lecteurs d'écran, navigation clavier)
+\end{itemize}
+\textbf{Fonctionnalités avancées :}
+\begin{itemize}
+\item Export d'itinéraire en PDF téléchargeable
+\item Synchronisation avec Google Calendar pour planification
+\item Notifications push pour rappels (horaires de visite, réservations)
+\item Intégration de la réalité augmentée (informations contextuelles sur site)
+\end{itemize}
+\textbf{Aspects techniques :}
+\begin{itemize}
+\item Migration vers une base de données relationnelle (PostgreSQL)
+\item Système de cache pour réduire les appels API et améliorer les performances
+\item Tests automatisés (unittest, pytest) pour garantir la stabilité
+\item Déploiement sur serveur cloud (Heroku, AWS, Google Cloud)
+\item Monitoring et analytics pour comprendre l'usage réel
+\end{itemize}
+Ces évolutions transformeraient KyotoBot d'un prototype pédagogique en une application touristique complète et professionnelle, tout en conservant sa simplicité d'utilisation et son intelligence conversationnelle.
+\newpage
+\section{Bibliographie}
+\renewcommand{\bibname}{}
+\renewcommand{\refname}{}
+\begin{thebibliography}{10}
+\bibitem{flask} Flask Documentation, \textit{Quickstart Guide et API Reference}, Pallets Projects, \url{https://flask.palletsprojects.com/}
+\bibitem{mistral} Mistral AI Documentation, \textit{API Reference et Prompt Engineering Guide}, Mistral AI, \url{https://docs.mistral.ai/}
+\bibitem{mdn} Mozilla Developer Network, \textit{Web Technologies Documentation (HTML, CSS, JavaScript)}, Mozilla Foundation, \url{https://developer.mozilla.org/}
+\bibitem{python} Python Documentation, \textit{The Python Standard Library}, Python Software Foundation, \url{https://docs.python.org/3/}
+\bibitem{jinja} Jinja Documentation, \textit{Template Designer Documentation}, Pallets Projects, \url{https://jinja.palletsprojects.com/}
+\bibitem{regex} Regular Expressions Documentation, \textit{re — Regular expression operations}, Python Software Foundation, \url{https://docs.python.org/3/library/re.html}
+\bibitem{latex} L. LAMPORT, \textit{\LaTeX : A Document Preparation System}, Addison-Wesley, 1994
+\end{thebibliography}
+\newpage
+\section{Webographie}
+\begin{thebibliography}{10}
+\bibitem{github} GitHub du projet KyotoBot : \url{https://github.com/yasmineboulil/kyotobot-projet.git}
+\bibitem{csstricks} CSS-Tricks, \textit{A Complete Guide to Flexbox et Grid}, \url{https://css-tricks.com/}
+\bibitem{markedjs} Marked.js Documentation, \textit{Markdown Parser}, \url{https://marked.js.org/}
+\bibitem{kyototourism} Office du Tourisme de Kyoto, \textit{Informations touristiques officielles}, \url{https://kyoto.travel/fr/}
+\bibitem{stackof} Stack Overflow, \textit{Questions et réponses techniques sur Flask et JavaScript}, \url{https://stackoverflow.com/}
+\bibitem{githubguides} GitHub Guides, \textit{Understanding the GitHub flow}, \url{https://guides.github.com/}
+\bibitem{w3schools} W3Schools, \textit{Tutoriels HTML, CSS et JavaScript}, \url{https://www.w3schools.com/}
+\end{thebibliography}
+\newpage
+\section{Annexes}
+\appendix
+\makeatletter
+\def@seccntformat#1{Annexe~\csname the#1\endcsname:\quad}
+\makeatother
+\section{Cahier des charges}
+\subsection{Objectif général}
+Développer une application web d'assistance touristique pour la ville de Kyoto utilisant l'intelligence artificielle pour générer des itinéraires personnalisés en fonction des préférences, du budget et du temps disponible de l'utilisateur.
+\subsection{Contraintes techniques}
+\begin{itemize}
+\item Utilisation obligatoire de Python avec un framework web (Flask retenu)
+\item Intégration d'une API d'intelligence artificielle externe (Mistral AI retenu)
+\item Interface web responsive (HTML5, CSS3, JavaScript)
+\item Versioning avec Git et hébergement sur GitHub
+\item Documentation complète (README, commentaires code, rapport)
+\end{itemize}
+\subsection{Fonctionnalités attendues}
+\textbf{Fonctionnalités principales :}
+\begin{enumerate}
+\item Chatbot conversationnel avec compréhension du langage naturel
+\item Base de données de lieux touristiques avec système de filtres
+\item Génération d'itinéraires personnalisés selon budget/durée/intérêts
+\item Itinéraires prédéfinis thématiques pour inspiration
+\end{enumerate}
+\textbf{Fonctionnalités secondaires (optionnelles) :}
+\begin{itemize}
+\item Liens vers Google Maps pour chaque lieu
+\item Connexions intelligentes entre les différentes sections
+\item Animations et design soigné
+\item Adaptation mobile et tablette
+\end{itemize}
+
+\section{Exemple d'exécution du projet}
+Cette annexe présente les principales fonctionnalités de KyotoBot à travers des captures d'écran commentées.
+\subsection{Page d'accueil}
+La page d'accueil accueille l'utilisateur avec un design élégant aux couleurs traditionnelles japonaises (rouge, noir, or). Elle présente clairement les trois fonctionnalités principales à travers des cartes visuelles explicatives.
+\textit{[]}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{Capture d’écran 2025-12-24 154408.png}
+    \caption{Page d'acceuil}
+    \label{fig:placeholder}
+\end{figure}
+\textbf{Éléments visibles :}
+\begin{itemize}
+\item Titre bilingue (japonais et français)
+\item Section "Comment ça marche ?" avec 3 cartes explicatives
+\item Trois boutons d'action clairs (Commencer l'aventure, Explorer les lieux, Voir les itinéraires)
+\item Navbar fixe en haut pour navigation rapide
+\item Cerisiers animés tombant en arrière-plan
+\end{itemize}
+\subsection{Chatbot - Message de bienvenue}
+L'interface du chatbot présente un design moderne de type messagerie. Le bot se présente et explique ses capacités dès l'ouverture.
+\textit{[]}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{Capture d’écran 2025-12-24 154734.png}
+    \caption{Chatbot}
+    \label{fig:placeholder}
+\end{figure}
+\textbf{Éléments visibles :}
+\begin{itemize}
+\item Zone de messages avec bulles distinctes (bot en rose, utilisateur en rouge)
+\item Champ de saisie avec placeholder explicatif
+\item Boutons de suggestions rapides ("Découverte temples", "Inspire-moi", "Itinéraire 1 jour")
+\item Avatar du bot (��) et statut "En ligne"
+\end{itemize}
+\subsection{Exemple de conversation simple}
+Démonstration d'une question simple posée au chatbot : "Où manger des ramens pas chers ?". Le bot répond de manière concise avec 3-4 restaurants recommandés.
+\textit{[]}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{Capture d’écran 2025-12-24 155102.png}
+    \caption{Exemple conversation}
+    \label{fig:placeholder}
+\end{figure}
+\textbf{Contenu de la réponse :}
+\begin{itemize}
+\item Liste de 3-4 restaurants de ramen avec noms et fourchettes de prix
+\item Un conseil pratique (horaires d'affluence, plats recommandés)
+\item Question de suivi : "Voulez-vous que je crée un itinéraire incluant ces lieux ?"
+\end{itemize}
+\subsection{Exemple d'itinéraire complet}
+L'utilisateur formule une demande de planification : "J'ai 50€ et une journée, je veux voir des temples". Le bot génère un itinéraire détaillé et structuré.
+\textit{[]}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Capture d’écran 2025-12-24 155340.png}
+    \caption{itinéraire complet}
+    \label{fig:placeholder}
+\end{figure}
+\textbf{Contenu de la réponse :}
+\begin{itemize}
+\item Résumé de la demande : budget 50€, durée 1 jour, intérêt temples
+\item Itinéraire chronologique : 8h00 → Temple Fushimi Inari, 10h30 → Temple Kiyomizu-dera, etc.
+\item Pour chaque étape : horaire, durée de visite, prix d'entrée, notes spécifiques
+\item Budget détaillé : entrées (1500¥) + repas (1500¥) + transport (700¥) = Total sous budget
+\item Conseils pratiques : pass bus journalier, chaussures confortables, prévoir de l'eau
+\end{itemize}
+\subsection{Guide des lieux}
+Vue d'ensemble de la page "Guide des lieux" montrant la grille de cartes avec les lieux emblématiques de Kyoto.
+\textit{[]}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{Capture d’écran 2025-12-24 155541.png}
+    \caption{Guide des lieux}
+    \label{fig:placeholder}
+\end{figure}
+\textbf{Éléments visibles :}
+\begin{itemize}
+\item Barre de filtres par catégorie en haut (Tous, Temples, Jardins, Marchés, Quartiers, Restaurants, Hébergements)
+\item Grille responsive de cartes de lieux
+\item Chaque carte affiche : nom, catégorie, description courte, durée, prix, deux boutons (Google Maps, Détails)
+\item Effet hover : la carte se soulève légèrement au survol
+\end{itemize}
+\subsection{Filtres par catégorie}
+Démonstration du système de filtres : l'utilisateur a cliqué sur le filtre "Temples ��", seuls les 7 temples de la base s'affichent.
+\textit{[]}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Capture d’écran 2025-12-26 134456.png}
+    \caption{Filtre sur Hérbergements}
+    \label{fig:placeholder}
+\end{figure}
+\textbf{Comportement observé :}
+\begin{itemize}
+\item Le bouton "Temples" est actif (surligné en rouge foncé)
+\item La grille ne montre que les lieux de catégorie "temple"
+\item Les autres catégories sont toujours accessibles dans la barre de filtres
+\item URL mise à jour avec paramètre \texttt{?categorie=temple}
+\end{itemize}
+\subsection{Page de détail d'un lieu}
+Exemple avec le Temple Kiyomizu-dera. La page affiche toutes les informations détaillées sur ce lieu emblématique.
+\textit{[]}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Capture d’écran 2025-12-26 134721.png}
+    \caption{Détails Jardin}
+    \label{fig:placeholder}
+\end{figure}
+\textbf{Sections visibles :}
+\begin{itemize}
+\item Titre avec nom du lieu
+\item Section "Informations pratiques" : catégorie, quartier, durée, prix
+\item Section "Description" : texte détaillé sur l'histoire et l'architecture
+\item Section "Conseil du guide" : encadré rose avec recommandation pratique
+\item Deux boutons d'action : "Voir sur Google Maps" et "Demander plus d'infos à KyotoBot"
+\end{itemize}
+\subsection{Itinéraires prédéfinis}
+Vue d'ensemble de la page "Itinéraires prédéfinis" présentant les 5 circuits thématiques disponibles.
+\textit{[]}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Capture d’écran 2025-12-26 134830.png}
+    \caption{Intinéraire prédéfinis}
+    \label{fig:placeholder}
+\end{figure}
+\textbf{Éléments visibles :}
+\begin{itemize}
+\item 5 grandes cartes colorées, une par itinéraire
+\item Chaque carte affiche : emoji thématique (�� ⛩️ �� �� ��), nom, durée, budget, description
+\item Bouton "Voir l'itinéraire détaillé" sur chaque carte
+\item Design cohérent avec le reste du site
+\end{itemize}
+\subsection{Détail d'un itinéraire}
+Exemple avec l'itinéraire "Kyoto en 1 jour". La page présente le programme heure par heure avec toutes les étapes détaillées.
+\textit{[]}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Capture d’écran 2025-12-26 135007.png}
+    \caption{itinéraire detaillé Nature & Zen}
+    \label{fig:placeholder}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Capture d’écran 2025-12-26 135302.png}
+    \caption{Chatbot spécialisé}
+    \label{fig:placeholder}
+\end{figure}
+\end{figure}
+\textbf{Contenu affiché :}
+\begin{itemize}
+\item Section "Vue d'ensemble" : durée totale, budget estimé, présentation
+\item Section "Programme détaillé" : liste chronologique des étapes
+\item Pour chaque étape : horaire (8h00, 10h30...), nom du lieu, catégorie, description, note spécifique, durée, prix, lien Google Maps
+\item Section "Conseils pratiques" : recommandations globales (pass transport, chaussures, eau)
+\item Bouton "Personnaliser cet itinéraire avec KyotoBot"
+\end{itemize}
+\subsection{Connexion Chat ↔ Lieux}
+Démonstration de la connexion intelligente entre les pages. Depuis la page de détail du Temple Kiyomizu-dera, l'utilisateur clique sur "Demander plus d'infos à KyotoBot".
+\textit{[]}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Capture d’écran 2025-12-26 135302.png}
+    \caption{Conversation chatbot specialisé}
+    \label{fig:placeholder}
+\end{figure}
+\textbf{Comportement observé :}
+\begin{itemize}
+\item Le chatbot s'ouvre avec une question pré-remplie : "Parle-moi de Temple Kiyomizu-dera en détail"
+\item L'utilisateur peut modifier la question ou l'envoyer directement
+\item Cette fonctionnalité facilite la transition entre navigation statique et interaction conversationnelle
+\item Le bot répond avec des informations complémentaires (histoire, anecdotes, conseils pratiques spécifiques)
+\end{itemize}
+\section{Manuel utilisateur}
+\subsection{Installation et démarrage}
+\textbf{Prérequis :}
+\begin{itemize}
+\item Python 3.10 ou supérieur installé sur votre machine
+\item Connexion Internet pour les appels API Mistral
+\item Navigateur web moderne (Chrome, Firefox, Edge, Safari)
+\end{itemize}
+\textbf{Étapes d'installation :}
+\begin{enumerate}
+\item \textbf{Télécharger le code source}
+Cloner le dépôt GitHub ou télécharger l'archive ZIP :
+\begin{verbatim}
+git clone https://github.com/yasmineboulil/kyotobot-projet.git
+cd kyotobot-projet
+\end{verbatim}
+\item \textbf{Installer les dépendances Python}
+\begin{verbatim}
+pip install -r requirements.txt
+\end{verbatim}
+Cela installera Flask et mistralai.
+\item \textbf{Configurer la clé API (si nécessaire)}
+Si vous utilisez votre propre clé API Mistral, ouvrez \texttt{config.py} et remplacez la valeur de \texttt{MISTRAL_API_KEY}.
+\item \textbf{Lancer l'application}
+\begin{verbatim}
+python app.py
+\end{verbatim}
+Le serveur Flask démarrera sur \texttt{http://localhost:5000}
+\item \textbf{Ouvrir dans le navigateur}
+Accédez à \texttt{http://localhost:5000} dans votre navigateur.
+\end{enumerate}
+\subsection{Utilisation du chatbot}
+\textbf{Démarrage d'une conversation :}
+\begin{enumerate}
+\item Depuis la page d'accueil, cliquez sur "�� Commencer l'aventure"
+\item Le chatbot vous accueille avec un message de bienvenue
+\item Tapez votre demande dans le champ de saisie en bas de page
+\end{enumerate}
+\textbf{Formulation des demandes :}
+Le chatbot comprend le langage naturel. Exemples de questions possibles :
+\begin{itemize}
+\item \textit{"J'ai 60€ et une journée, je veux voir des temples"}
+\item \textit{"Où manger des ramens pas chers ?"}
+\item \textit{"Recommande-moi un hôtel dans le quartier de Gion"}
+\item \textit{"Que faire à Kyoto au printemps ?"}
+\item \textit{"Crée-moi un itinéraire romantique pour 2 jours"}
+\end{itemize}
+\textbf{Boutons de suggestion rapide :}
+Pour faciliter la prise en main, trois boutons de suggestion sont disponibles :
+\begin{itemize}
+\item "�� Temples" : Lance une question sur les temples classiques
+\item "✨ Inspire-moi" : Demande au bot de proposer une visite originale
+\item "�� 1 jour" : Demande un itinéraire d'une journée
+\item "�� Nouveau" : Réinitialise la conversation
+\end{itemize}
+\textbf{Réinitialisation :}
+Cliquez sur le bouton "�� Nouveau" pour effacer l'historique de conversation et recommencer.
+\subsection{Navigation dans le guide des lieux}
+\textbf{Accès au guide :}
+\begin{itemize}
+\item Depuis l'accueil : cliquer sur "�� Explorer les lieux"
+\item Via la navbar : cliquer sur "�� Lieux"
+\end{itemize}
+\textbf{Utilisation des filtres :}
+\begin{enumerate}
+\item En haut de la page, une barre de filtres présente les 6 catégories
+\item Cliquer sur une catégorie (ex : "Temples ��") pour n'afficher que les lieux de cette catégorie
+\item Cliquer sur "Tous ��" pour réafficher tous les lieux
+\item Les filtres modifient l'URL (\texttt{?categorie=temple}) permettant de partager un lien filtré
+\end{enumerate}
+\textbf{Consultation des détails d'un lieu :}
+\begin{enumerate}
+\item Cliquer sur le bouton "��️ Détails" d'une carte de lieu
+\item La page de détail affiche : description complète, informations pratiques, conseil du guide
+\item Deux actions possibles :
+\begin{itemize}
+\item "�� Voir sur Google Maps" : Ouvre Google Maps avec le lieu pré-recherché
+\item "�� Demander plus d'infos à KyotoBot" : Ouvre le chatbot avec question pré-remplie
+\end{itemize}
+\end{enumerate}
+\subsection{Consultation des itinéraires prédéfinis}
+\textbf{Accès aux itinéraires :}
+\begin{itemize}
+\item Depuis l'accueil : cliquer sur "��️ Voir les itinéraires"
+\item Via la navbar : cliquer sur "��️ Itinéraires"
+\end{itemize}
+\textbf{Parcourir les itinéraires :}
+\begin{enumerate}
+\item La page présente 5 itinéraires thématiques sous forme de grandes cartes
+\item Chaque carte indique : thème, durée, budget estimé, description courte
+\item Cliquer sur "�� Voir l'itinéraire détaillé" pour accéder au programme complet
+\end{enumerate}
+\textbf{Consultation du détail d'un itinéraire :}
+\begin{enumerate}
+\item La page de détail présente trois sections :
+\begin{itemize}
+\item Vue d'ensemble (durée, budget, présentation)
+\item Programme détaillé (étapes heure par heure avec lieux, prix, notes)
+\item Conseils pratiques (recommandations globales)
+\end{itemize}
+\item Bouton "�� Personnaliser cet itinéraire avec KyotoBot" pour adapter l'itinéraire via le chatbot
+\end{enumerate}
+\subsection{Navigation générale}
+\textbf{Navbar fixe :}
+Une barre de navigation fixe en haut de toutes les pages permet d'accéder rapidement à :
+\begin{itemize}
+\item Accueil
+\item Chat (��)
+\item Lieux (��)
+\item Itinéraires (��️)
+\end{itemize}
+\textbf{Boutons de retour :}
+Des boutons "← Retour" sont présents sur les pages de détail pour revenir facilement à la page précédente.
+\subsection{Conseils d'utilisation}
+\begin{itemize}
+\item \textbf{Soyez spécifique :} Plus vous donnez de détails (budget, durée, intérêts), plus les recommandations seront précises
+\item \textbf{Explorez les suggestions :} Utilisez les filtres et itinéraires prédéfinis pour découvrir des lieux auxquels vous n'auriez pas pensé
+\item \textbf{Combinez les fonctionnalités :} Parcourez d'abord le guide des lieux, puis demandez au chatbot de créer un itinéraire incluant vos lieux préférés
+\item \textbf{Testez "Inspire-moi" :} Cette fonction propose des visites originales hors des sentiers battus
+\end{itemize}
+\end{document}
